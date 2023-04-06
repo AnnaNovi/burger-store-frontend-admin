@@ -15,9 +15,12 @@ export default defineComponent({
   computed: {
     titles() {
       const titlesArray = ['Настройки'];
-      if(store.activeItem?.name) {
-        titlesArray.push(store.activeItem?.name);
+      if(store.activeList?.name) {
+        titlesArray.push(store.activeList?.name);
       };
+      if(store.activeItem) {
+        titlesArray.push(store.activeItem);
+      }
       return titlesArray;
     }
   }

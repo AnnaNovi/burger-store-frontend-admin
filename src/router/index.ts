@@ -35,10 +35,14 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: () => import('@/components/SettingList.vue')
+          component: () => import('@/components/SettingTitles.vue')
         },
         {
           path: ':settingType',
+          component: () => import('@/components/SettingList.vue')
+        },
+        {
+          path: ':settingType/:settingId',
           component: () => import('@/components/SettingItem.vue')
         }
       ]

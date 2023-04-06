@@ -1,8 +1,4 @@
-import { filter, map, mergeMap, of, switchMap, type Observable } from 'rxjs';
-
-// export function getData(entkey: string) {
-//   return commonRequest$<string>('get', { entkey });
-// }
+import { mergeMap, of, switchMap, Observable } from 'rxjs';
 
 export function commonRequest$<T = any>(
   method: 'post' | 'get' | 'delete' | 'put' | 'patch' | 'meta',

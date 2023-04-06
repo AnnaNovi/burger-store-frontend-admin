@@ -1,15 +1,14 @@
 <template>
   <div>
-    SettingItem
-    <!-- <v-container>
+    <v-container>
       <v-row 
         class="ma-2"
         v-for="item in items" 
         :key="item.entkey"
       >
-        <v-btn block @click="openSettingItem(item)">{{ item.name }}</v-btn>
+        <v-btn block @click="openSettingList(item)">{{ item.name }}</v-btn>
       </v-row>
-    </v-container> -->
+    </v-container>
   </div>
 </template>
 
@@ -19,20 +18,20 @@ import { useSettingsStore } from '../stores/settings'
 const store = useSettingsStore();
 
 export default defineComponent({
-  name: 'SettingItem',
+  name: 'SettingTitles',
   data() {
-    return {}
+    return {
+      items: store.items,
+      titleInitial: 'Настройки'
+    }
   },
-  methods: {},
-  created(){
-    console.warn(this.$route.params);
-    // const type = this.$route.params.settingType;
-    // if ( type ) {
-    //   store.changeActiveList(type);
-    // }
+  methods: {
+    openSettingList( item: { name: string, entkey: string } ) {
+      this.$router.push(`/settings/${item.entkey}`)
+    }
   },
-  beforeMount() {
-    // store.getData$().subscribe(value => {
+  created() {
+    store.changeActiveList();
   }
 })
 </script>

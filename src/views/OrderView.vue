@@ -6,12 +6,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getData } from '../srv.service';
+import { getData$ } from '../srv.service';
 
 export default defineComponent({
   methods: {
     fetch() {
-      return getData('categories')
+      return getData$('categories')
         .subscribe(value => console.warn(value));
     },
   }

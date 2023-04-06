@@ -10,30 +10,32 @@ export const useSettingsStore = defineStore('settings', {
   state: () => {
     return {
       items: [
+        { name: 'Словарь', entkey: 'dictionary' },
         { name: 'Категории', entkey: 'categories' },
         { name: 'Продукты', entkey: 'products' }
       ] as ISettingItem[],
-      activeItem: null as ISettingItem | null
+      activeList: null as ISettingItem | null,
+      activeItem: null as string | null
     };
   },
   actions: {
-    getData() {
-      const entkey = this.activeItem?.entkey;
+    getData$() {
+      const entkey = this.activeList?.entkey;
       if (entkey) {
         return commonRequest$<string>('get', { entkey });
       } else {
         console.warn('Ошибка, попробуйте перезагрузить станицу');
       }
     },
-    changeActiveItem(item?: ISettingItem | string): void {
+    changeActiveList(item?: ISettingItem | string): void {
       if (typeof item === 'string') {
         this.items.forEach((value: ISettingItem) => {
           if (value.entkey === item) {
-            return (this.activeItem = value);
+            return (this.activeList = value);
           }
         });
       } else {
-        this.activeItem = (item ? item : null) as ISettingItem | null;
+        this.activeList = (item ? item : null) as ISettingItem | null;
       }
     }
   }
