@@ -13,15 +13,16 @@ export function commonRequest$<T = any>(
     offset?: string | number;
     search?: string;
     urlApi?: string;
+    body?: Object;
     messageLoad?: string;
     messageError?: string;
     messageSuccess?: string;
     isSilent?: boolean;
   }
-): Observable<any> {
+): Observable<T> {
   const HEADERS = {
-    'Content-Type': 'application/vnd.api+json',
-    Accept: 'application/vnd.api+json'
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
   };
   const isSilent = o.isSilent ?? false;
   // const messageSuccess = o.messageSuccess ?? 'Успешно'
@@ -41,10 +42,20 @@ export function commonRequest$<T = any>(
 
   return of(o.entkey).pipe(
     switchMap(() => {
-      return fetch(path + (urlWithParams ?? url), {
-        method: method,
-        headers: HEADERS
-      });
+      switch (method) {
+        case 'get':
+        case 'meta':
+          return fetch(path + (urlWithParams ?? url), {
+            method: method,
+            headers: HEADERS
+          });
+        default:
+          return fetch(path + (urlWithParams ?? url), {
+            method: method,
+            headers: HEADERS,
+            body: JSON.stringify(o.body)
+          });
+      }
     }),
     mergeMap((value) => value.json())
   );

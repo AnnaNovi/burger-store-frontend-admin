@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <nav>
-      <v-app-bar color="secondary" :elevation="0" rounded>
+      <v-app-bar id="appHeader" color="secondary" :elevation="0" rounded>
         <v-app-bar-nav-icon variant="text" @click.stop="isOpenMenu = !isOpenMenu"></v-app-bar-nav-icon>
         <v-app-bar-title>AdminPanel</v-app-bar-title>
         <template v-slot:append>
