@@ -1,4 +1,4 @@
-import { mergeMap, of, switchMap, Observable } from 'rxjs';
+import { mergeMap, of, switchMap, Observable, retry, catchError } from 'rxjs';
 
 export function commonRequest$<T = any>(
   method: 'post' | 'get' | 'delete' | 'put' | 'patch' | 'meta',
@@ -20,6 +20,7 @@ export function commonRequest$<T = any>(
     isSilent?: boolean;
   }
 ): Observable<T> {
+  // console.warn(o);
   const HEADERS = {
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -31,32 +32,43 @@ export function commonRequest$<T = any>(
   const path = 'http://localhost:3005';
   const urlApi = o.urlApi ?? 'webapi';
   const url = `/${urlApi}/${o.entkey}` + (o.entid ? `/${o.entid}/` : '');
-  const params: string[] = [];
-  let urlWithParams: string | null = null;
+  const paramsObj = o.params || {};
+  let paramsJoin: string = '';
 
-  ['search', 'offset', 'limit', 'query'].forEach((param: string, index: number) => {
+  for (let param in o.params) {
+    paramsObj[param] = o.params[param];
+  }
+  ['search', 'offset', 'limit', 'query'].forEach((param: string) => {
     const paramValue = o[param as keyof typeof o];
-    if (paramValue) params.push(`${param}=${paramValue}`);
+    if (paramValue) paramsObj[param] = String(o[param as keyof typeof o]);
   });
-  if (params.length) urlWithParams = `${url}?${params.join('&')}`;
+  for (let param in paramsObj) {
+    paramsJoin = `${paramsJoin}${param}=${paramsObj[param]}&`;
+  }
+  if (paramsJoin.length) paramsJoin = `?${paramsJoin}`.slice(0, paramsJoin.length);
 
   return of(o.entkey).pipe(
     switchMap(() => {
       switch (method) {
         case 'get':
         case 'meta':
-          return fetch(path + (urlWithParams ?? url), {
+          return fetch(`${path}${url}` + paramsJoin, {
             method: method,
             headers: HEADERS
           });
         default:
-          return fetch(path + (urlWithParams ?? url), {
+          return fetch(`${path}${url}`, {
             method: method,
             headers: HEADERS,
             body: JSON.stringify(o.body)
           });
       }
     }),
-    mergeMap((value) => value.json())
+    mergeMap((value) => value.json()),
+    retry(2),
+    catchError((error: Error) => {
+      console.warn(error);
+      return of<any>(error);
+    })
   );
 }

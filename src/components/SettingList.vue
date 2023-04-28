@@ -6,7 +6,7 @@
       Добавить
     </v-btn>
     <v-table v-if="items.length">
-      <thead>
+      <thead id="tableHead" ref="tableHead">
         <tr>
           <th 
             style="text-align:center !important;"
@@ -33,11 +33,12 @@
         </tr>
       </tbody>
     </v-table>
+    <div v-else class="emptyItems"><h2>Нет данных</h2></div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, nextTick } from "vue";
 import { useSettingsStore } from '../stores/settings';
 const store = useSettingsStore();
 
@@ -58,8 +59,24 @@ export default defineComponent({
   },
   methods: {
     addSettingItem() {
-      console.warn(this.$router, this.$router.currentRoute.value.path);
       this.$router.push(`${this.$router.currentRoute.value.path}/new`)
+    },
+    toggleFixedTHead() {
+      // https://habr.com/ru/articles/494670/
+      const tableHead = document.querySelector('#tableHead');
+      const options = {
+        root: document.querySelector('#appHeader'),
+        threshold: 0
+      };
+      const callback = (entries, observer) => {
+        console.warn('HIHIHI', entries, observer);
+      }
+      const observer = new IntersectionObserver(callback, options);
+      // observer.observe(tableHead);
+      // observer.observe(this.$refs.tableHead);
+      // console.warn(this.$refs.tableHead);
+
+      console.warn(this.$refs.tableHead, tableHead);
     }
   },
   created(){
@@ -81,14 +98,17 @@ export default defineComponent({
             time: new Date(item[field]).toLocaleTimeString('ru-RU', { timeStyle: 'short' }),
           }
         });
-        item.Type = ( item.Type === 'category' ) ? 'Категория' : 'Подкатегория';
+        // item.Type = ( item.Type === 'category' ) ? 'Категория' : 'Подкатегория';
       });
     });
   },
+  mounted() {
+    // this.$nextTick(() => { this.toggleFixedTHead(); });
+  }
 })
 </script>
 
-<style>
+<style lang="scss">
   .title {
     margin-bottom: 30px;
   }
@@ -100,11 +120,17 @@ export default defineComponent({
     padding: 5px 0;
   }
   tr th {
-    background: #03DAC6;
+    background: $secondary-color;
   }
   table {
     margin-top: 20px;
-    border: 2px solid #03DAC6;
+    border: 2px solid $secondary-color;
+  }
+  .emptyItems {
+    text-align: center;
+    opacity: 0.3;
+    margin-top: 40px;
+    text-transform: uppercase;
   }
 </style>
 

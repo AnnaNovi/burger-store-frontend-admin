@@ -23,6 +23,7 @@ type TSchemaField = {
   key: string;
   name: string;
   type: TFieldType;
+  select_key?: string;
   modality: TFieldModality;
   readonly: boolean;
 };

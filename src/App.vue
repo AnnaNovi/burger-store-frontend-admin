@@ -26,7 +26,12 @@
       </v-navigation-drawer>
     </nav>
     <v-main>
-      <router-view class="content"/>
+      <Suspense>
+        <router-view class="content"/>
+        <template #fallback>
+          Loading...
+        </template>
+      </Suspense>
     </v-main>
   <v-footer style="flex: initial; z-index: 10000" border color="secondary">
     <a class="px-4 py-2 text-white text-center w-100" href="https://github.com/AnnaNovi" target="_blank">
@@ -37,8 +42,10 @@
 </template>
 
 <script lang="ts">
+import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
 import { useTheme } from 'vuetify';
+import { useSettingsStore } from './stores/settings';
 
 export default defineComponent({
   name: 'App',
@@ -72,6 +79,12 @@ export default defineComponent({
       ]
     }
   },
+  methods: {
+    ...mapActions(useSettingsStore, ['setDictItems']),
+  },
+  beforeMount() {
+    this.setDictItems();
+  }
 })
 </script>
 

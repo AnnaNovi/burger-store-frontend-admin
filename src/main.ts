@@ -5,7 +5,11 @@ import { loadFonts } from './plugins/webfontloader';
 import router from './router';
 import vuetify from './plugins/vuetify';
 import pinia from './plugins/pinia';
+import { registerComponents } from './plugins/registercomp';
+
+const app = createApp(App);
 
 loadFonts();
+registerComponents(app);
 
-createApp(App).use(router).use(pinia).use(vuetify).mount('#app');
+app.use(router).use(pinia).use(vuetify).mount('#app');
